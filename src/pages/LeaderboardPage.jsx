@@ -222,12 +222,12 @@ export default function LeaderboardPage() {
           <p className="mt-1 text-charcoal-700">Every meal shared makes a difference ❤️</p>
         </div>
 
-        <div className="flex flex-wrap gap-1 rounded-full border border-charcoal-900/15 bg-cream-100 p-1 text-sm font-semibold">
+        <div className="grid w-full grid-cols-2 gap-1 rounded-2xl border border-charcoal-900/15 bg-cream-100 p-1 text-sm font-semibold sm:w-fit sm:flex sm:rounded-full">
           {PERIODS.map((p) => (
             <button
               key={p.key}
               onClick={() => setPeriod(p.key)}
-              className={`rounded-full px-3 py-1.5 transition-colors sm:px-4 ${
+              className={`rounded-xl px-3 py-1.5 text-center transition-colors sm:rounded-full sm:px-4 ${
                 period === p.key ? "bg-terracotta-500 text-cream-50" : "text-charcoal-700 hover:text-terracotta-600"
               }`}
             >
