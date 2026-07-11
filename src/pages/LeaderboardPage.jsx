@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import client from "../api/client.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import Avatar from "../components/Avatar.jsx";
@@ -14,9 +15,9 @@ const PERIODS = [
 
 const PODIUM_ORDER = [1, 0, 2];
 const PODIUM_STYLES = [
-  { avatarSize: 88, standHeight: "h-24", ring: "ring-gold-400", crown: true },
-  { avatarSize: 68, standHeight: "h-16", ring: "ring-charcoal-700/25", crown: false },
-  { avatarSize: 68, standHeight: "h-10", ring: "ring-terracotta-300", crown: false },
+  { avatarSize: 88, standHeight: 96, ring: "ring-gold-400", crown: true },
+  { avatarSize: 68, standHeight: 64, ring: "ring-charcoal-700/25", crown: false },
+  { avatarSize: 68, standHeight: 40, ring: "ring-terracotta-300", crown: false },
 ];
 
 function Podium({ top3 }) {
@@ -24,38 +25,92 @@ function Podium({ top3 }) {
 
   return (
     <div className="flex items-end justify-center gap-4 pb-2 sm:gap-8">
-      {PODIUM_ORDER.map((rankIdx) => {
+      {PODIUM_ORDER.map((rankIdx, position) => {
         const person = top3[rankIdx];
         if (!person) return null;
         const style = PODIUM_STYLES[rankIdx];
         const tier = donorTier(person.mealsShared);
+        const standDelay = 0.1 + position * 0.2;
+        const avatarDelay = standDelay + 0.35;
 
         return (
           <div key={person.id} className="flex flex-col items-center">
             <div className="relative mb-2">
-              {style.crown && <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-2xl">👑</span>}
+              {style.crown && (
+                <motion.span
+                  className="absolute -top-7 left-1/2 -translate-x-1/2 text-2xl"
+                  initial={{ opacity: 0, y: -16, rotate: -15 }}
+                  animate={{ opacity: 1, y: 0, rotate: 0 }}
+                  transition={{ delay: avatarDelay + 0.3, duration: 0.5, ease: "backOut" }}
+                >
+                  👑
+                </motion.span>
+              )}
               {rankIdx === 0 && (
                 <>
-                  <span className="absolute -left-4 -top-2 text-sm">✦</span>
-                  <span className="absolute -right-5 top-0 text-lg">🎉</span>
-                  <span className="absolute -right-2 top-8 text-xs">✦</span>
+                  <motion.span
+                    className="absolute -left-4 -top-2 text-sm"
+                    aria-hidden="true"
+                    animate={{ opacity: [0.3, 1, 0.3], scale: [0.9, 1.15, 0.9] }}
+                    transition={{ delay: avatarDelay + 0.6, duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    ✦
+                  </motion.span>
+                  <motion.span
+                    className="absolute -right-5 top-0 text-lg"
+                    initial={{ opacity: 0, scale: 0.3 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: avatarDelay + 0.4, duration: 0.4, ease: "backOut" }}
+                  >
+                    🎉
+                  </motion.span>
+                  <motion.span
+                    className="absolute -right-2 top-8 text-xs"
+                    aria-hidden="true"
+                    animate={{ opacity: [0.3, 1, 0.3], scale: [0.9, 1.15, 0.9] }}
+                    transition={{ delay: avatarDelay + 0.9, duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    ✦
+                  </motion.span>
                 </>
               )}
-              <div className={`rounded-full ring-4 ${style.ring}`}>
+              <motion.div
+                className={`rounded-full ring-4 ${style.ring}`}
+                initial={{ opacity: 0, scale: 0.3 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: avatarDelay, duration: 0.45, ease: "backOut" }}
+              >
                 <Avatar name={person.orgName || person.name} size={style.avatarSize} />
-              </div>
-              <span className="absolute -bottom-1 left-1/2 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full bg-cream-50 text-sm shadow">
+              </motion.div>
+              <motion.span
+                className="absolute -bottom-1 left-1/2 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full bg-cream-50 text-sm shadow"
+                initial={{ opacity: 0, scale: 0.3 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: avatarDelay + 0.15, duration: 0.4, ease: "backOut" }}
+              >
                 {MEDALS[rankIdx]}
-              </span>
+              </motion.span>
             </div>
-            <p className="mt-2 max-w-[7rem] truncate text-center font-display text-sm font-semibold text-charcoal-900 sm:max-w-[9rem] sm:text-base">
-              {person.orgName || person.name}
-            </p>
-            <span className="mt-0.5 rounded-full bg-terracotta-100 px-2 py-0.5 text-[11px] font-medium text-terracotta-700">
-              {tier.emoji} {tier.label}
-            </span>
-            <p className="mt-1 text-sm font-bold text-terracotta-600">{person.mealsShared} meals</p>
-            <div className={`mt-3 w-20 rounded-t-lg bg-gradient-to-b from-cream-200 to-cream-200/40 sm:w-28 ${style.standHeight}`} />
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: avatarDelay + 0.25, duration: 0.4 }}
+              className="flex flex-col items-center"
+            >
+              <p className="mt-2 max-w-[7rem] truncate text-center font-display text-sm font-semibold text-charcoal-900 sm:max-w-[9rem] sm:text-base">
+                {person.orgName || person.name}
+              </p>
+              <span className="mt-0.5 rounded-full bg-terracotta-100 px-2 py-0.5 text-[11px] font-medium text-terracotta-700">
+                {tier.emoji} {tier.label}
+              </span>
+              <p className="mt-1 text-sm font-bold text-terracotta-600">{person.mealsShared} meals</p>
+            </motion.div>
+            <motion.div
+              className="mt-3 w-20 rounded-t-lg bg-gradient-to-b from-cream-200 to-cream-200/40 sm:w-28"
+              initial={{ height: 0 }}
+              animate={{ height: style.standHeight }}
+              transition={{ delay: standDelay, duration: 0.5, ease: "easeOut" }}
+            />
           </div>
         );
       })}

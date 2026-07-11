@@ -159,10 +159,10 @@ export default function ImpactPage() {
           Platform-wide impact
         </h2>
         <div className="relative mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <StatTile dark icon="🍽️" label="Meals shared" value={loading ? "—" : platform.mealsShared} />
-          <StatTile dark icon="📦" label="Donations completed" value={loading ? "—" : platform.donationsCompleted} />
-          <StatTile dark icon="📋" label="Live listings" value={loading ? "—" : platform.activeDonations} />
-          <StatTile dark icon="🤝" label="Active NGOs / volunteers" value={loading ? "—" : platform.activeOrganizations} />
+          <StatTile dark icon="🍽️" label="Meals shared" value={loading ? "—" : platform.mealsShared} delay={0} />
+          <StatTile dark icon="📦" label="Donations completed" value={loading ? "—" : platform.donationsCompleted} delay={0.12} />
+          <StatTile dark icon="📋" label="Live listings" value={loading ? "—" : platform.activeDonations} delay={0.24} />
+          <StatTile dark icon="🤝" label="Active NGOs / volunteers" value={loading ? "—" : platform.activeOrganizations} delay={0.36} />
         </div>
       </section>
     </div>
