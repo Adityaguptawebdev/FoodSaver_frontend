@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import client from "../api/client.js";
 import Button from "../components/Button.jsx";
 import StatTile from "../components/StatTile.jsx";
 import DonationCard from "../components/DonationCard.jsx";
 import FlowArrow from "../components/FlowArrow.jsx";
+import HeroIllustration from "../components/HeroIllustration.jsx";
 
 const STEPS = [
   {
@@ -68,11 +70,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative mx-auto flex h-56 w-56 items-center justify-center sm:h-72 sm:w-72 md:h-80 md:w-80">
-            <div className="absolute inset-0 rounded-[40%_60%_60%_40%/40%_40%_60%_60%] bg-terracotta-500/15" />
-            <div className="absolute inset-6 rounded-[60%_40%_40%_60%/60%_60%_40%_40%] bg-olive-500/15" />
-            <span className="relative text-7xl sm:text-8xl">🥘</span>
-          </div>
+          <HeroIllustration />
         </div>
       </section>
 
@@ -85,9 +83,15 @@ export default function LandingPage() {
                 <span className="absolute -top-4 left-6 flex h-8 w-8 items-center justify-center rounded-full bg-terracotta-500 text-sm font-bold text-cream-50">
                   {i + 1}
                 </span>
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-terracotta-100 text-3xl">
+                <motion.div
+                  className="flex h-14 w-14 items-center justify-center rounded-full bg-terracotta-100 text-3xl"
+                  initial={{ opacity: 0, scale: 0.3, rotate: -20 }}
+                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ delay: i * 0.15, duration: 0.5, ease: "backOut" }}
+                >
                   {step.icon}
-                </div>
+                </motion.div>
                 <h3 className="mt-4 font-display text-xl font-semibold text-charcoal-900">{step.title}</h3>
                 <p className="mt-2 text-sm text-charcoal-700">{step.body}</p>
               </div>
@@ -137,10 +141,10 @@ export default function LandingPage() {
         <div className="relative mx-auto max-w-6xl px-6">
           <h2 className="text-center font-display text-2xl font-semibold text-cream-50 sm:text-3xl">Our impact so far</h2>
           <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <StatTile dark icon="🍽️" label="Meals shared" value={stats ? stats.mealsShared : "—"} />
-            <StatTile dark icon="📦" label="Donations completed" value={stats ? stats.donationsCompleted : "—"} />
-            <StatTile dark icon="📋" label="Live listings" value={stats ? stats.activeDonations : "—"} />
-            <StatTile dark icon="🤝" label="Active NGOs / volunteers" value={stats ? stats.activeOrganizations : "—"} />
+            <StatTile dark icon="🍽️" label="Meals shared" value={stats ? stats.mealsShared : "—"} delay={0} />
+            <StatTile dark icon="📦" label="Donations completed" value={stats ? stats.donationsCompleted : "—"} delay={0.12} />
+            <StatTile dark icon="📋" label="Live listings" value={stats ? stats.activeDonations : "—"} delay={0.24} />
+            <StatTile dark icon="🤝" label="Active NGOs / volunteers" value={stats ? stats.activeOrganizations : "—"} delay={0.36} />
           </div>
           <div className="mt-8 text-center">
             <Link
