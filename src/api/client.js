@@ -5,7 +5,7 @@ const client = axios.create({
 });
 
 client.interceptors.request.use((config) => {
-  const token = localStorage.getItem("foodsaver_token");
+  const token = sessionStorage.getItem("foodsaver_token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
