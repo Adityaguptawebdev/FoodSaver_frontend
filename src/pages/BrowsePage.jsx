@@ -1,16 +1,52 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import client from "../api/client.js";
 import { useGeolocation } from "../hooks/useGeolocation.js";
+import { searchAddress } from "../utils/geocode.js";
+import { haversineKm } from "../utils/distance.js";
 import DonationCard from "../components/DonationCard.jsx";
 import Button from "../components/Button.jsx";
 
 export default function BrowsePage() {
-  const { coords, error: geoError, loading: geoLoading, requestLocation } = useGeolocation();
+  const { coords: geoCoords, error: geoError, loading: geoLoading, requestLocation } = useGeolocation();
+  const [coords, setCoords] = useState(null);
   const [radiusKm, setRadiusKm] = useState(10);
   const [donations, setDonations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [claimingId, setClaimingId] = useState(null);
   const [message, setMessage] = useState("");
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    if (geoCoords) setCoords(geoCoords);
+  }, [geoCoords]);
+
+  function handleQueryChange(value) {
+    setQuery(value);
+    clearTimeout(debounceRef.current);
+    if (value.trim().length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    debounceRef.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        setSuggestions(await searchAddress(value));
+      } catch {
+        setSuggestions([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 400);
+  }
+
+  function pickSuggestion(s) {
+    setCoords({ lat: s.lat, lng: s.lng });
+    setQuery(s.label);
+    setSuggestions([]);
+  }
 
   function load() {
     if (!coords) return;
@@ -67,8 +103,36 @@ export default function BrowsePage() {
       {geoError && <p className="mt-4 text-sm text-danger-500">{geoError}</p>}
       {message && <p className="mt-4 rounded-lg bg-olive-100 px-4 py-2 text-sm text-olive-700">{message}</p>}
 
+      {!coords && (
+        <div className="relative mt-6 max-w-sm">
+          <p className="mb-2 text-sm text-charcoal-700">Or type a location to browse from instead:</p>
+          <input
+            value={query}
+            onChange={(e) => handleQueryChange(e.target.value)}
+            placeholder="Search for a place…"
+            className="w-full rounded-xl border border-charcoal-900/15 bg-cream-50 px-4 py-2.5 text-sm outline-none focus:border-terracotta-500"
+          />
+          {searching && <p className="mt-1 text-xs text-charcoal-700">Searching…</p>}
+          {suggestions.length > 0 && (
+            <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-charcoal-900/15 bg-cream-50 shadow-md">
+              {suggestions.map((s) => (
+                <li key={`${s.lat},${s.lng}`}>
+                  <button
+                    type="button"
+                    onClick={() => pickSuggestion(s)}
+                    className="block w-full px-4 py-2 text-left text-sm text-charcoal-800 hover:bg-cream-200"
+                  >
+                    {s.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
       {!coords ? (
-        <p className="mt-10 text-charcoal-700">Share your location to see donations near you.</p>
+        <p className="mt-10 text-charcoal-700">Share your location, or search above, to see donations near you.</p>
       ) : loading ? (
         <p className="mt-10 text-charcoal-700">Loading…</p>
       ) : donations.length === 0 ? (
@@ -79,6 +143,11 @@ export default function BrowsePage() {
             <DonationCard
               key={d._id}
               donation={d}
+              distanceKm={
+                d.location?.coordinates?.length === 2
+                  ? haversineKm(coords.lat, coords.lng, d.location.coordinates[1], d.location.coordinates[0])
+                  : null
+              }
               footer={
                 <Button
                   variant="primary"

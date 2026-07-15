@@ -26,7 +26,12 @@ const TAKEN_LABEL = {
   cancelled: "No longer available",
 };
 
-export default function DonationCard({ donation, footer, muted = false, pickupPhotoUrl }) {
+function formatDistance(km) {
+  if (km == null) return null;
+  return km < 1 ? `${Math.round(km * 1000)} m away` : `${km.toFixed(1)} km away`;
+}
+
+export default function DonationCard({ donation, footer, muted = false, pickupPhotoUrl, distanceKm }) {
   const { title, description, foodType, quantity, unit, photoUrl, safeUntil, pickupAddress, donor, ai, status, location } =
     donation;
 
@@ -102,6 +107,11 @@ export default function DonationCard({ donation, footer, muted = false, pickupPh
               </a>
             ) : (
               pickupAddress
+            )}
+            {distanceKm != null && (
+              <span className="ml-1.5 whitespace-nowrap rounded-full bg-olive-100 px-2 py-0.5 text-xs font-medium text-olive-700">
+                {formatDistance(distanceKm)}
+              </span>
             )}
           </dd>
           <dt className="font-medium">Window</dt>
