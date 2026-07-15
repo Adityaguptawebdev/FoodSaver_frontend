@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import client from "../api/client.js";
-import { useGeolocation } from "../hooks/useGeolocation.js";
+import LocationPicker from "../components/LocationPicker.jsx";
 import Button from "../components/Button.jsx";
 
 const emptyForm = {
@@ -15,7 +15,7 @@ const emptyForm = {
 };
 
 export default function DonatePage() {
-  const { coords, error: geoError, loading: geoLoading, requestLocation } = useGeolocation();
+  const [coords, setCoords] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [photo, setPhoto] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -46,6 +46,7 @@ export default function DonatePage() {
       });
       setCreated(res.data.donation);
       setForm(emptyForm);
+      setCoords(null);
       setPhoto(null);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't post this donation.");
@@ -174,26 +175,13 @@ export default function DonatePage() {
           />
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-charcoal-800">
-          Pickup address
-          <input
-            required
-            placeholder="Street, area, city"
-            value={form.pickupAddress}
-            onChange={(e) => update("pickupAddress", e.target.value)}
-            className="rounded-xl border border-charcoal-900/15 bg-cream-50 px-4 py-2.5 outline-none focus:border-terracotta-500"
-          />
-        </label>
-
-        <div className="flex items-center gap-3 rounded-xl bg-cream-200 px-4 py-3">
-          <Button type="button" variant="outline" onClick={requestLocation} disabled={geoLoading} className="py-1.5 text-sm">
-            {geoLoading ? "Locating…" : "Set pickup location"}
-          </Button>
-          <span className="text-xs text-charcoal-700">
-            {coords ? `Location set (${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)})` : "Required so nearby NGOs can find you"}
-          </span>
-        </div>
-        {geoError && <p className="text-xs text-danger-500">{geoError}</p>}
+        <LocationPicker
+          required
+          address={form.pickupAddress}
+          onAddressChange={(value) => update("pickupAddress", value)}
+          coords={coords}
+          onCoordsChange={setCoords}
+        />
 
         <label className="flex flex-col gap-1.5 text-sm font-medium text-charcoal-800">
           Photo (optional, powers the AI listing assist)

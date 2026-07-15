@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import { useGeolocation } from "../hooks/useGeolocation.js";
+import LocationPicker from "../components/LocationPicker.jsx";
 import Button from "../components/Button.jsx";
 import PasswordInput from "../components/PasswordInput.jsx";
 
@@ -17,7 +17,7 @@ const ROLES = [
 export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const { coords, error: geoError, loading: geoLoading, requestLocation } = useGeolocation();
+  const [coords, setCoords] = useState(null);
 
   const [form, setForm] = useState({
     role: "donor",
@@ -136,25 +136,12 @@ export default function RegisterPage() {
             />
           </label>
 
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-charcoal-800">
-            Address
-            <input
-              value={form.address}
-              onChange={(e) => setForm({ ...form, address: e.target.value })}
-              placeholder="Street, area, city"
-              className={inputClasses}
-            />
-          </label>
-
-          <div className="flex flex-col items-start gap-2 rounded-xl bg-cream-200 px-4 py-3 sm:flex-row sm:items-center sm:gap-3">
-            <Button type="button" variant="outline" onClick={requestLocation} disabled={geoLoading} className="py-1.5 text-sm">
-              {geoLoading ? "Locating…" : "Use my current location"}
-            </Button>
-            <span className="text-xs text-charcoal-700">
-              {coords ? `Location set (${coords.lat.toFixed(3)}, ${coords.lng.toFixed(3)})` : "Used to match nearby donations"}
-            </span>
-          </div>
-          {geoError && <p className="text-xs text-danger-500">{geoError}</p>}
+          <LocationPicker
+            address={form.address}
+            onAddressChange={(value) => setForm({ ...form, address: value })}
+            coords={coords}
+            onCoordsChange={setCoords}
+          />
 
           {error && <p className="text-sm text-danger-500">{error}</p>}
 
