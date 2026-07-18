@@ -9,7 +9,7 @@ function ChevronSvg({ vertical }) {
     <svg width={vertical ? 24 : 40} height={vertical ? 40 : 24} viewBox={vertical ? "0 0 24 40" : "0 0 40 24"} fill="none">
       {CHEVRONS.map((c, i) => {
         const offset = i * 12;
-        const d = vertical ? `M4 ${2 + offset} l8 8 -8 8` : `M${2 + offset} 4 l8 8 -8 8`;
+        const d = vertical ? `M4 ${2 + offset} l8 8 l8 -8` : `M${2 + offset} 4 l8 8 -8 8`;
         return (
           <path
             key={i}
@@ -18,7 +18,7 @@ function ChevronSvg({ vertical }) {
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="chevron-flow"
+            className={vertical ? "chevron-flow-vertical" : "chevron-flow"}
             style={{ animationDelay: c.delay }}
           />
         );
