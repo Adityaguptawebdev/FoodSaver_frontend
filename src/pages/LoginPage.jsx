@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import Button from "../components/Button.jsx";
 import PasswordInput from "../components/PasswordInput.jsx";
+import foodHandoverImg from "../assets/illustrations/food-handover.png";
 
 const inputClasses =
   "rounded-xl border border-charcoal-900/15 bg-cream-50 px-4 py-2.5 outline-none focus:border-terracotta-500";
@@ -37,9 +38,7 @@ export default function LoginPage() {
       <div className="texture-grain relative hidden w-1/2 shrink-0 overflow-hidden bg-olive-700 md:flex md:flex-col md:items-center md:justify-center md:px-12">
         <div className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full bg-cream-50/5" aria-hidden="true" />
         <div className="pointer-events-none absolute -bottom-24 -right-10 h-72 w-72 rounded-full bg-cream-50/5" aria-hidden="true" />
-        <div className="relative flex h-32 w-32 items-center justify-center rounded-full bg-cream-50/10 text-6xl">
-          🥘
-        </div>
+        <img src={foodHandoverImg} alt="" className="relative h-48 w-auto lg:h-56" />
         <h2 className="relative mt-8 max-w-sm text-center font-display text-3xl font-semibold text-cream-50">
           Good food finds a good home.
         </h2>

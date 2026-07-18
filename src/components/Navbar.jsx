@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext.jsx";
 import Button from "./Button.jsx";
+import Avatar from "./Avatar.jsx";
 
 const linkClasses = ({ isActive }) =>
   `text-sm font-semibold transition-colors ${isActive ? "text-terracotta-600" : "text-charcoal-700 hover:text-terracotta-600"}`;
@@ -39,8 +40,7 @@ function NavLinks({ user, className, linkClass, onNavigate }) {
 }
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(72);
@@ -64,12 +64,6 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  function handleLogout() {
-    logout();
-    setMenuOpen(false);
-    navigate("/");
-  }
-
   function closeMenu() {
     setMenuOpen(false);
   }
@@ -87,10 +81,16 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
-            <>
-              <span className="text-sm text-charcoal-700">Hi, {user.orgName || user.name.split(" ")[0]}</span>
-              <Button variant="ghost" onClick={handleLogout}>Log out</Button>
-            </>
+            <Link
+              to="/profile"
+              className="group flex items-center gap-2.5 rounded-full border border-charcoal-900/10 bg-cream-100/60 py-1 pl-1 pr-4 text-sm font-medium text-charcoal-800 shadow-sm transition-all hover:border-terracotta-300 hover:bg-cream-100 hover:shadow-md"
+              onClick={closeMenu}
+            >
+              <span className="rounded-full ring-2 ring-cream-50 transition-shadow group-hover:ring-terracotta-300">
+                <Avatar name={user.orgName || user.name} src={user.avatarUrl} size={30} />
+              </span>
+              Hi, {user.orgName || user.name.split(" ")[0]}
+            </Link>
           ) : (
             <>
               <Button as={Link} to="/login" variant="ghost">Log in</Button>
@@ -142,12 +142,17 @@ export default function Navbar() {
                 <NavLinks user={user} className="flex flex-col gap-1" linkClass={mobileLinkClasses} onNavigate={closeMenu} />
                 <div className="mt-3 flex flex-col gap-2 border-t border-charcoal-900/10 pt-3">
                   {user ? (
-                    <>
-                      <span className="px-3 text-sm text-charcoal-700">
-                        Signed in as {user.orgName || user.name}
+                    <Link
+                      to="/profile"
+                      onClick={closeMenu}
+                      className="flex items-center gap-3 rounded-xl border border-charcoal-900/10 bg-cream-100/60 px-3 py-2.5 text-sm text-charcoal-800 transition-colors hover:bg-cream-200"
+                    >
+                      <Avatar name={user.orgName || user.name} src={user.avatarUrl} size={36} />
+                      <span>
+                        <span className="block font-semibold">{user.orgName || user.name}</span>
+                        <span className="block text-xs text-charcoal-700">View profile</span>
                       </span>
-                      <Button variant="ghost" onClick={handleLogout} className="w-full">Log out</Button>
-                    </>
+                    </Link>
                   ) : (
                     <>
                       <Button as={Link} to="/login" variant="ghost" className="w-full" onClick={closeMenu}>Log in</Button>

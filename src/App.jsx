@@ -10,6 +10,7 @@ import BrowsePage from "./pages/BrowsePage.jsx";
 import MyClaimsPage from "./pages/MyClaimsPage.jsx";
 import ImpactPage from "./pages/ImpactPage.jsx";
 import LeaderboardPage from "./pages/LeaderboardPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 export default function App() {
@@ -59,6 +60,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ImpactPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />

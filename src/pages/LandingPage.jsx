@@ -1,26 +1,33 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import client from "../api/client.js";
 import Button from "../components/Button.jsx";
 import StatTile from "../components/StatTile.jsx";
 import DonationCard from "../components/DonationCard.jsx";
+import { DonationGridSkeleton } from "../components/DonationCardSkeleton.jsx";
 import FlowArrow from "../components/FlowArrow.jsx";
+import StepCard from "../components/StepCard.jsx";
 import HeroIllustration from "../components/HeroIllustration.jsx";
+import bannerImg from "../assets/illustrations/banner.png";
+import locationImg from "../assets/illustrations/location.png";
+import foodHandoverImg from "../assets/illustrations/food-handover.png";
+import foodCarryImg from "../assets/illustrations/food-carry.png";
+import completeImg from "../assets/illustrations/complete.png";
+import liveImg from "../assets/illustrations/live.png";
 
 const STEPS = [
   {
-    icon: "🍱",
+    image: bannerImg,
     title: "Post surplus food",
     body: "Restaurants, event organizers, or households log what's left over, how much, and the safe pickup window.",
   },
   {
-    icon: "📍",
+    image: locationImg,
     title: "Nearby NGOs get matched",
     body: "Verified NGOs and volunteers within range see the listing the moment it goes live — no scrolling through irrelevant posts.",
   },
   {
-    icon: "🤝",
+    image: foodHandoverImg,
     title: "Pickup, verified",
     body: "A handoff code confirms the food actually changed hands, and both sides track it through to delivery.",
   },
@@ -76,25 +83,13 @@ export default function LandingPage() {
 
       <section className="mx-auto max-w-6xl px-6 py-16 md:py-20">
         <h2 className="text-center font-display text-2xl font-semibold text-charcoal-900 sm:text-3xl">How it works</h2>
-        <div className="mt-12 flex flex-col md:flex-row md:items-stretch">
+        <p className="mx-auto mt-2 max-w-md text-center text-sm text-charcoal-700">
+          From a spare tray of food to a delivered meal, in three steps.
+        </p>
+        <div className="mt-12 flex flex-col gap-y-4 md:flex-row md:items-stretch md:gap-y-0">
           {STEPS.map((step, i) => (
             <div key={step.title} className="contents">
-              <div className="relative flex-1 rounded-2xl border border-charcoal-900/10 bg-cream-50 p-6 transition-all hover:-translate-y-1 hover:shadow-lg">
-                <span className="absolute -top-4 left-6 flex h-8 w-8 items-center justify-center rounded-full bg-terracotta-500 text-sm font-bold text-cream-50">
-                  {i + 1}
-                </span>
-                <motion.div
-                  className="flex h-14 w-14 items-center justify-center rounded-full bg-terracotta-100 text-3xl"
-                  initial={{ opacity: 0, scale: 0.3, rotate: -20 }}
-                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ delay: i * 0.15, duration: 0.5, ease: "backOut" }}
-                >
-                  {step.icon}
-                </motion.div>
-                <h3 className="mt-4 font-display text-xl font-semibold text-charcoal-900">{step.title}</h3>
-                <p className="mt-2 text-sm text-charcoal-700">{step.body}</p>
-              </div>
+              <StepCard image={step.image} title={step.title} body={step.body} index={i} />
               {i < STEPS.length - 1 && <FlowArrow />}
             </div>
           ))}
@@ -114,7 +109,7 @@ export default function LandingPage() {
           </div>
 
           {recentLoading ? (
-            <p className="mt-8 text-charcoal-700">Loading…</p>
+            <DonationGridSkeleton />
           ) : recent.length === 0 ? (
             <p className="mt-8 rounded-2xl border border-dashed border-charcoal-900/20 bg-cream-50 p-8 text-center text-charcoal-700">
               No donations posted yet — be the first!
@@ -140,11 +135,14 @@ export default function LandingPage() {
         />
         <div className="relative mx-auto max-w-6xl px-6">
           <h2 className="text-center font-display text-2xl font-semibold text-cream-50 sm:text-3xl">Our impact so far</h2>
-          <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <StatTile dark icon="🍽️" label="Meals shared" value={stats ? stats.mealsShared : "—"} delay={0} />
-            <StatTile dark icon="📦" label="Donations completed" value={stats ? stats.donationsCompleted : "—"} delay={0.12} />
-            <StatTile dark icon="📋" label="Live listings" value={stats ? stats.activeDonations : "—"} delay={0.24} />
-            <StatTile dark icon="🤝" label="Active NGOs / volunteers" value={stats ? stats.activeOrganizations : "—"} delay={0.36} />
+          <p className="mx-auto mt-2 max-w-md text-center text-sm text-cream-100/80">
+            Real numbers from real rescues, updated as donations move from posted to delivered.
+          </p>
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-4">
+            <StatTile dark icon={<img src={bannerImg} alt="" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />} label="Meals shared" value={stats ? stats.mealsShared : "—"} delay={0} />
+            <StatTile dark icon={<img src={completeImg} alt="" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />} label="Donations completed" value={stats ? stats.donationsCompleted : "—"} delay={0.12} />
+            <StatTile dark icon={<img src={liveImg} alt="" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />} label="Live listings" value={stats ? stats.activeDonations : "—"} delay={0.24} />
+            <StatTile dark icon={<img src={foodCarryImg} alt="" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />} label="Active NGOs / volunteers" value={stats ? stats.activeOrganizations : "—"} delay={0.36} />
           </div>
           <div className="mt-8 text-center">
             <Link

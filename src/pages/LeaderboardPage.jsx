@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import client from "../api/client.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import Avatar from "../components/Avatar.jsx";
+import Skeleton from "../components/Skeleton.jsx";
 import { donorTier, orgTier } from "../utils/gamification.js";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
@@ -186,6 +187,52 @@ function Board({ title, icon, rows, metricLabel, metricKey, tierFn, emptyText, s
   );
 }
 
+const PODIUM_SKELETON_HEIGHTS = [64, 96, 40];
+
+function PodiumSkeleton() {
+  return (
+    <div className="flex items-end justify-center gap-4 pb-2 pt-10 sm:gap-8">
+      {PODIUM_SKELETON_HEIGHTS.map((standHeight, i) => (
+        <div key={i} className="flex flex-col items-center">
+          <Skeleton className="h-16 w-16 rounded-full sm:h-[68px] sm:w-[68px]" />
+          <Skeleton className="mt-3 h-4 w-16" />
+          <Skeleton className="mt-2 h-3 w-12" />
+          <div className="mt-3 w-20 rounded-t-lg bg-cream-200 sm:w-28" style={{ height: standHeight }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function BoardRowSkeleton() {
+  return (
+    <li className="flex items-center gap-3 px-1 py-2.5">
+      <Skeleton className="h-4 w-7 shrink-0 rounded" />
+      <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
+      <div className="min-w-0 flex-1">
+        <Skeleton className="h-3.5 w-2/5" />
+        <Skeleton className="mt-2 h-1.5 w-full rounded-full" />
+      </div>
+      <Skeleton className="h-3.5 w-14 shrink-0" />
+    </li>
+  );
+}
+
+function BoardSkeleton({ title, icon }) {
+  return (
+    <div className="flex-1 rounded-2xl border border-charcoal-900/10 bg-cream-50 p-6">
+      <h3 className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal-900">
+        <span className="text-2xl">{icon}</span> {title}
+      </h3>
+      <ul className="mt-4 flex flex-col divide-y divide-charcoal-900/5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <BoardRowSkeleton key={i} />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function LeaderboardPage() {
   const { user } = useAuth();
   const [period, setPeriod] = useState("all");
@@ -248,7 +295,15 @@ export default function LeaderboardPage() {
       )}
 
       {loading ? (
-        <p className="mt-10 text-charcoal-700">Loading…</p>
+        <>
+          <div className="mt-10 overflow-hidden rounded-2xl border border-charcoal-900/10 bg-cream-100/50">
+            <PodiumSkeleton />
+          </div>
+          <div className="mt-8 flex flex-col gap-6 md:flex-row">
+            <BoardSkeleton title="Top Donors" icon="⭐" />
+            <BoardSkeleton title="Top NGOs & Volunteers" icon="🤝" />
+          </div>
+        </>
       ) : (
         <>
           {data.topDonors.length > 0 && (

@@ -4,6 +4,7 @@ import { useGeolocation } from "../hooks/useGeolocation.js";
 import { searchAddress } from "../utils/geocode.js";
 import { haversineKm } from "../utils/distance.js";
 import DonationCard from "../components/DonationCard.jsx";
+import { DonationGridSkeleton } from "../components/DonationCardSkeleton.jsx";
 import Button from "../components/Button.jsx";
 
 export default function BrowsePage() {
@@ -134,7 +135,7 @@ export default function BrowsePage() {
       {!coords ? (
         <p className="mt-10 text-charcoal-700">Share your location, or search above, to see donations near you.</p>
       ) : loading ? (
-        <p className="mt-10 text-charcoal-700">Loading…</p>
+        <DonationGridSkeleton />
       ) : donations.length === 0 ? (
         <p className="mt-10 text-charcoal-700">No available donations in this radius right now — try widening it.</p>
       ) : (
