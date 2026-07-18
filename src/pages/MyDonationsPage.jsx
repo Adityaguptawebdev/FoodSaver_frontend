@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import client from "../api/client.js";
 import DonationCard from "../components/DonationCard.jsx";
+import { DonationGridSkeleton } from "../components/DonationCardSkeleton.jsx";
 import Button from "../components/Button.jsx";
+import donationBannerImage from "../assets/illustrations/banner.png";
 
 const CLAIMED_STATUSES = ["claimed", "out_for_pickup", "picked_up"];
 const POLL_MS = 8000;
@@ -95,13 +97,32 @@ export default function MyDonationsPage() {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-display text-2xl font-semibold text-charcoal-900 sm:text-3xl">My donations</h1>
-        <Button as={Link} to="/donate" variant="primary">Post another</Button>
+      <div className="relative overflow-hidden rounded-3xl border border-charcoal-900/10 bg-gradient-to-br from-cream-100 to-cream-200/60 px-6 py-8 sm:px-10 sm:py-10">
+        <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-terracotta-500/10" aria-hidden="true" />
+        <div className="pointer-events-none absolute -bottom-16 -left-10 h-56 w-56 rounded-full bg-olive-500/10" aria-hidden="true" />
+
+        <div className="relative flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+          <div>
+            <span className="inline-block rounded-full bg-olive-100 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-olive-700">
+              Your donations
+            </span>
+            <h1 className="mt-3 font-display text-2xl font-semibold text-charcoal-900 sm:text-3xl">
+              Every donation you post, tracked to the plate.
+            </h1>
+            <p className="mt-2 max-w-md text-sm text-charcoal-700 sm:text-base">
+              From posting surplus food to a confirmed handoff — see the full journey of everything you've shared.
+            </p>
+            <div className="mt-5">
+              <Button as={Link} to="/donate" variant="primary">Post another</Button>
+            </div>
+          </div>
+
+          <img src={donationBannerImage} alt="" className="h-40 w-auto sm:h-52" />
+        </div>
       </div>
 
       {loading ? (
-        <p className="mt-8 text-charcoal-700">Loading…</p>
+        <DonationGridSkeleton />
       ) : donations.length === 0 ? (
         <p className="mt-8 text-charcoal-700">You haven't posted any donations yet.</p>
       ) : (

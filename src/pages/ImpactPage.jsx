@@ -5,7 +5,12 @@ import client from "../api/client.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import StatTile from "../components/StatTile.jsx";
 import Avatar from "../components/Avatar.jsx";
+import Skeleton from "../components/Skeleton.jsx";
 import { donorTier, orgTier, getNextTier, DONOR_TIERS, ORG_TIERS } from "../utils/gamification.js";
+import bannerImg from "../assets/illustrations/banner.png";
+import foodCarryImg from "../assets/illustrations/food-carry.png";
+import completeImg from "../assets/illustrations/complete.png";
+import liveImg from "../assets/illustrations/live.png";
 
 const TERRACOTTA = "#c1602f";
 const GRID = "#efe0c2";
@@ -35,7 +40,7 @@ function HeroCard({ user, rank }) {
       <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <div className="rounded-full ring-4 ring-terracotta-300">
-            <Avatar name={user.orgName || user.name} size={72} />
+            <Avatar name={user.orgName || user.name} src={user.avatarUrl} size={72} />
           </div>
           <div>
             <p className="text-sm text-charcoal-700">Welcome back</p>
@@ -118,7 +123,13 @@ export default function ImpactPage() {
       {user?.role === "donor" && (
         <div className="mt-8 rounded-2xl border border-charcoal-900/10 bg-cream-50 p-6">
           <h3 className="font-display text-lg font-semibold text-charcoal-900">Meals shared over time</h3>
-          {timeline.length === 0 ? (
+          {loading ? (
+            <div className="mt-4 flex h-64 items-end gap-2 sm:gap-3">
+              {[35, 55, 40, 70, 50, 85, 60, 45, 65, 50, 75, 55].map((h, i) => (
+                <Skeleton key={i} className="flex-1 rounded-t-lg rounded-b-none" style={{ height: `${h}%` }} />
+              ))}
+            </div>
+          ) : timeline.length === 0 ? (
             <p className="mt-4 text-sm text-charcoal-700">
               Once your donations are delivered, your daily meals-shared trend will show up here.
             </p>
@@ -158,11 +169,14 @@ export default function ImpactPage() {
         <h2 className="relative text-center font-display text-xl font-semibold text-cream-50 sm:text-2xl">
           Platform-wide impact
         </h2>
-        <div className="relative mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <StatTile dark icon="🍽️" label="Meals shared" value={loading ? "—" : platform.mealsShared} delay={0} />
-          <StatTile dark icon="📦" label="Donations completed" value={loading ? "—" : platform.donationsCompleted} delay={0.12} />
-          <StatTile dark icon="📋" label="Live listings" value={loading ? "—" : platform.activeDonations} delay={0.24} />
-          <StatTile dark icon="🤝" label="Active NGOs / volunteers" value={loading ? "—" : platform.activeOrganizations} delay={0.36} />
+        <p className="relative mx-auto mt-2 max-w-md text-center text-sm text-cream-100/80">
+          Every donor and volunteer on Food Saver, added together.
+        </p>
+        <div className="relative mt-6 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-4">
+          <StatTile dark icon={<img src={bannerImg} alt="" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />} label="Meals shared" value={loading ? "—" : platform.mealsShared} delay={0} />
+          <StatTile dark icon={<img src={completeImg} alt="" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />} label="Donations completed" value={loading ? "—" : platform.donationsCompleted} delay={0.12} />
+          <StatTile dark icon={<img src={liveImg} alt="" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />} label="Live listings" value={loading ? "—" : platform.activeDonations} delay={0.24} />
+          <StatTile dark icon={<img src={foodCarryImg} alt="" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />} label="Active NGOs / volunteers" value={loading ? "—" : platform.activeOrganizations} delay={0.36} />
         </div>
       </section>
     </div>

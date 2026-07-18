@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import client from "../api/client.js";
 import DonationCard from "../components/DonationCard.jsx";
+import { DonationGridSkeleton } from "../components/DonationCardSkeleton.jsx";
 import Button from "../components/Button.jsx";
 
 function ClaimActions({ claim, onUpdate }) {
@@ -108,7 +109,7 @@ export default function MyClaimsPage() {
       <h1 className="font-display text-2xl font-semibold text-charcoal-900 sm:text-3xl">My claims</h1>
 
       {loading ? (
-        <p className="mt-8 text-charcoal-700">Loading…</p>
+        <DonationGridSkeleton />
       ) : claims.length === 0 ? (
         <p className="mt-8 text-charcoal-700">You haven't claimed any donations yet — browse what's available nearby.</p>
       ) : (
