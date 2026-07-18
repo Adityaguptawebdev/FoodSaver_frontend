@@ -47,8 +47,17 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <div className="flex flex-1 flex-col justify-center px-4 py-10 sm:px-6 md:px-16 lg:px-24">
-        <div className="mx-auto w-full max-w-sm">
+      <div className="relative flex flex-1 flex-col justify-center overflow-hidden px-4 py-10 sm:px-6 md:px-16 lg:px-24">
+        <div
+          className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-terracotta-500/10 md:hidden"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -bottom-20 -left-16 h-64 w-64 rounded-full bg-olive-700/10 md:hidden"
+          aria-hidden="true"
+        />
+
+        <div className="relative z-10 mx-auto w-full max-w-sm">
           <h1 className="font-display text-2xl font-semibold text-charcoal-900 sm:text-3xl">Welcome back</h1>
           <p className="mt-2 text-charcoal-700">Log in to post or claim food donations.</p>
 

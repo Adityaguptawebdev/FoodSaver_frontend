@@ -15,7 +15,9 @@ export default function StepCard({ image, title, body, index }) {
       onHoverEnd={() => setHovered(false)}
       whileHover={{ y: -6, boxShadow: "0 16px 32px -12px rgba(36,29,22,0.18)" }}
     >
-      <div className="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r from-terracotta-500 to-transparent opacity-60" />
+      <div className="absolute inset-0 overflow-hidden rounded-2xl">
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-terracotta-500 to-transparent opacity-60" />
+      </div>
 
       <motion.span
         className="absolute -top-4 left-6 flex h-8 w-8 items-center justify-center rounded-full bg-terracotta-500 text-sm font-bold text-cream-50"

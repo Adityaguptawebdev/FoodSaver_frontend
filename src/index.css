@@ -109,12 +109,28 @@
   }
 }
 
+@keyframes chevron-flow-vertical {
+  0%, 100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(5px);
+  }
+}
+
 .chevron-flow {
   animation: chevron-flow 1.4s ease-in-out infinite;
 }
 
+.chevron-flow-vertical {
+  animation: chevron-flow-vertical 1.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .chevron-flow {
+  .chevron-flow,
+  .chevron-flow-vertical {
     animation: none;
     opacity: 0.8;
   }
