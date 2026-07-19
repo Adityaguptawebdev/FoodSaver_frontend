@@ -8,6 +8,7 @@ import Button from "../components/Button.jsx";
 import LocationPicker from "../components/LocationPicker.jsx";
 import ConfirmDialog from "../components/ConfirmDialog.jsx";
 import { donorTier, orgTier } from "../utils/gamification.js";
+import updateProfileImg from "../assets/illustrations/update-profile.png";
 
 const inputClasses =
   "rounded-xl border border-charcoal-900/15 bg-cream-50 px-4 py-2.5 outline-none transition-colors focus:border-terracotta-500";
@@ -113,7 +114,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <div className="relative overflow-hidden rounded-3xl border border-charcoal-900/10 bg-gradient-to-br from-cream-100 to-cream-200/60 px-6 py-8 sm:px-10 sm:py-10">
+      <div className="relative flex items-center justify-between gap-6 overflow-hidden rounded-3xl border border-charcoal-900/10 bg-gradient-to-br from-cream-100 to-cream-200/60 px-6 py-8 sm:px-10 sm:py-10">
         <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-terracotta-500/10" aria-hidden="true" />
         <div className="pointer-events-none absolute -bottom-16 -left-10 h-56 w-56 rounded-full bg-olive-500/10" aria-hidden="true" />
 
@@ -128,6 +129,13 @@ export default function ProfilePage() {
             Update your details, swap your photo, and keep your pickup location accurate.
           </p>
         </div>
+
+        <img
+          src={updateProfileImg}
+          alt=""
+          className="relative hidden h-32 w-32 shrink-0 object-contain sm:block md:h-40 md:w-40"
+          aria-hidden="true"
+        />
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 grid gap-6 lg:grid-cols-[300px_1fr] lg:items-start">

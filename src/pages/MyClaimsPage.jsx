@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import client from "../api/client.js";
 import DonationCard from "../components/DonationCard.jsx";
 import { DonationGridSkeleton } from "../components/DonationCardSkeleton.jsx";
 import Button from "../components/Button.jsx";
+import foodCarryImg from "../assets/illustrations/food-carry.png";
 
 function ClaimActions({ claim, onUpdate }) {
   const [code, setCode] = useState("");
@@ -104,26 +106,63 @@ export default function MyClaimsPage() {
 
   useEffect(load, []);
 
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
-      <h1 className="font-display text-2xl font-semibold text-charcoal-900 sm:text-3xl">My claims</h1>
+  const activeCount = claims.filter((c) => !["delivered", "cancelled", "expired"].includes(c.status)).length;
 
-      {loading ? (
-        <DonationGridSkeleton />
-      ) : claims.length === 0 ? (
-        <p className="mt-8 text-charcoal-700">You haven't claimed any donations yet — browse what's available nearby.</p>
-      ) : (
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {claims.map((c) => (
-            <DonationCard
-              key={c._id}
-              donation={{ ...c.donation, status: c.status }}
-              pickupPhotoUrl={c.pickupPhotoUrl}
-              footer={<ClaimActions claim={c} onUpdate={load} />}
-            />
-          ))}
+  return (
+    <div className="texture-grain min-h-[calc(100vh-73px)] bg-cream-100">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
+        <div className="relative overflow-hidden rounded-3xl border border-charcoal-900/10 bg-gradient-to-br from-cream-100 to-cream-200/60 px-6 py-8 sm:px-10 sm:py-10">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-terracotta-500/10" aria-hidden="true" />
+          <div className="pointer-events-none absolute -bottom-16 -left-10 h-56 w-56 rounded-full bg-olive-500/10" aria-hidden="true" />
+
+          <div className="relative flex flex-wrap items-center justify-between gap-6">
+            <div>
+              <span className="inline-block rounded-full bg-terracotta-100 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-terracotta-700">
+                Your claims
+              </span>
+              <h1 className="mt-3 font-display text-2xl font-semibold text-charcoal-900 sm:text-3xl">My claims</h1>
+              <p className="mt-2 max-w-md text-sm text-charcoal-700 sm:text-base">
+                Track pickups from claim to delivery, and confirm handoffs as they happen.
+              </p>
+            </div>
+
+            {!loading && claims.length > 0 && (
+              <div className="rounded-2xl border border-charcoal-900/10 bg-cream-50 px-6 py-4 text-center shadow-sm">
+                <div className="font-display text-3xl font-semibold text-terracotta-600">{activeCount}</div>
+                <div className="text-xs font-medium uppercase tracking-wide text-charcoal-700">Active pickups</div>
+              </div>
+            )}
+          </div>
         </div>
-      )}
+
+        {loading ? (
+          <div className="mt-8">
+            <DonationGridSkeleton />
+          </div>
+        ) : claims.length === 0 ? (
+          <div className="mt-8 flex flex-col items-center rounded-3xl border border-dashed border-charcoal-900/20 bg-cream-50 px-6 py-14 text-center">
+            <img src={foodCarryImg} alt="" className="h-40 w-40 object-contain sm:h-48 sm:w-48" />
+            <h2 className="mt-2 font-display text-xl font-semibold text-charcoal-900">No claims yet</h2>
+            <p className="mt-2 max-w-sm text-charcoal-700">
+              You haven't claimed any donations yet — browse what's available nearby and grab one.
+            </p>
+            <Button as={Link} to="/browse" variant="primary" className="mt-6">
+              Browse donations
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {claims.map((c) => (
+              <DonationCard
+                key={c._id}
+                donation={{ ...c.donation, status: c.status }}
+                pickupPhotoUrl={c.pickupPhotoUrl}
+                footer={<ClaimActions claim={c} onUpdate={load} />}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
