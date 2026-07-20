@@ -137,7 +137,7 @@
 }
 
 .fs-datepicker-popper {
-  z-index: 50 !important;
+  z-index: 1050 !important;
 }
 
 .fs-datepicker.react-datepicker {
