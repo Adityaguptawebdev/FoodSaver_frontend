@@ -81,7 +81,7 @@ function Podium({ top3 }) {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: avatarDelay, duration: 0.45, ease: "backOut" }}
               >
-                <Avatar name={person.orgName || person.name} size={style.avatarSize} />
+                <Avatar name={person.orgName || person.name} src={person.avatarUrl} size={style.avatarSize} />
               </motion.div>
               <motion.span
                 className="absolute -bottom-1 left-1/2 flex h-7 w-7 -translate-x-1/2 items-center justify-center rounded-full bg-cream-50 text-sm shadow"
@@ -130,7 +130,7 @@ function BoardRow({ row, index, maxValue, metricKey, metricLabel, tierFn, showVe
       ) : (
         <span className="w-7 shrink-0 text-center text-sm font-semibold text-charcoal-700">#{index + 1}</span>
       )}
-      <Avatar name={row.orgName || row.name} size={36} />
+      <Avatar name={row.orgName || row.name} src={row.avatarUrl} size={36} />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <span className="truncate font-medium text-charcoal-900">{row.orgName || row.name}</span>

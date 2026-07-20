@@ -14,7 +14,7 @@ export default function ConfirmDialog({
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center px-4">
           <motion.div
             className="absolute inset-0 bg-charcoal-900/50 backdrop-blur-sm"
             initial={{ opacity: 0 }}
