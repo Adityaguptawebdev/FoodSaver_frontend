@@ -8,8 +8,8 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-charcoal-900/10 bg-cream-200/60">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 sm:grid-cols-2 md:grid-cols-4 md:py-16">
-        <div className="sm:col-span-2 md:col-span-1">
+      <div className="mx-auto grid max-w-6xl gap-x-8 gap-y-10 px-6 py-12 sm:grid-cols-2 sm:py-14 md:grid-cols-4 md:py-16">
+        <div>
           <Link to="/" className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal-900">
             <img src="/favicon.svg" alt="" className="h-8 w-8" />
             Food Saver
