@@ -45,7 +45,7 @@ export default function LandingPage() {
       .catch(() => setStats(null));
 
     client
-      .get("/donations/recent")
+      .get("/donations/recent", { params: { limit: 6 } })
       .then((res) => setRecent(res.data.donations))
       .catch(() => setRecent([]))
       .finally(() => setRecentLoading(false));
