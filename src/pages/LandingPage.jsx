@@ -154,10 +154,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      <footer className="mx-auto max-w-6xl px-6 py-10 text-center text-sm text-charcoal-700">
-        Food Saver — a self-initiated project to reduce food waste, one donation at a time.
-      </footer>
     </div>
   );
 }
