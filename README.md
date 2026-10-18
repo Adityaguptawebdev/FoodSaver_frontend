@@ -3,7 +3,7 @@
 React (Vite) + Tailwind CSS frontend for Food Saver, connecting restaurants and
 individuals with surplus food to nearby NGOs and volunteers.
 
-**Live app: https://food-saver-frontend-seven.vercel.app/**
+**Live app:https://donateforgood.vercel.app/
 
 Backend API repo: [`FoodSaver_backend`](https://github.com/Adityaguptawebdev/FoodSaver_backend) — this app talks to it over HTTP and expects it to be running/deployed independently.
 
