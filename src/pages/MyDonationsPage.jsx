@@ -133,13 +133,18 @@ export default function MyDonationsPage() {
               donation={d}
               pickupPhotoUrl={claims[d._id]?.pickupPhotoUrl}
               footer={
-                d.status === "available" ? (
-                  <Button variant="danger" className="w-full text-sm" onClick={() => handleCancel(d._id)}>
-                    Cancel donation
+                <div className="flex flex-col gap-2">
+                  {d.status === "available" ? (
+                    <Button variant="danger" className="w-full text-sm" onClick={() => handleCancel(d._id)}>
+                      Cancel donation
+                    </Button>
+                  ) : claims[d._id] ? (
+                    <ClaimPanel claim={claims[d._id]} />
+                  ) : null}
+                  <Button as={Link} to={`/donate?repost=${d._id}`} variant="outline" className="w-full py-2 text-sm">
+                    🔁 Post again
                   </Button>
-                ) : claims[d._id] ? (
-                  <ClaimPanel claim={claims[d._id]} />
-                ) : null
+                </div>
               }
             />
           ))}
