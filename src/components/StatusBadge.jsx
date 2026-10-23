@@ -8,10 +8,11 @@ const STATUS_META = {
   cancelled: { label: "Cancelled", classes: "bg-danger-500/10 text-danger-600" },
 };
 
-export default function StatusBadge({ status }) {
+export default function StatusBadge({ status, size = "md" }) {
   const meta = STATUS_META[status] || { label: status, classes: "bg-cream-200 text-charcoal-700" };
+  const sizeClasses = size === "sm" ? "px-2 py-0.5 text-[10px]" : "px-3 py-1 text-xs";
   return (
-    <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${meta.classes}`}>
+    <span className={`inline-block rounded-full font-semibold uppercase tracking-wide ${sizeClasses} ${meta.classes}`}>
       {meta.label}
     </span>
   );

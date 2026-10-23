@@ -1,12 +1,6 @@
 import StatusBadge from "./StatusBadge.jsx";
-
-const API_ORIGIN = (import.meta.env.VITE_API_URL || "http://localhost:5050/api").replace(/\/api\/?$/, "");
-
-// Cloudinary URLs are already absolute; older local-disk uploads were relative
-// paths like "/uploads/xyz.jpg" and need the API origin prepended.
-function resolveImageUrl(url) {
-  return /^https?:\/\//.test(url) ? url : `${API_ORIGIN}${url}`;
-}
+import { resolveImageUrl } from "../utils/imageUrl.js";
+import { formatDistance } from "../utils/distance.js";
 
 function timeUntil(dateStr) {
   const diffMs = new Date(dateStr).getTime() - Date.now();
@@ -25,11 +19,6 @@ const TAKEN_LABEL = {
   expired: "No longer available",
   cancelled: "No longer available",
 };
-
-function formatDistance(km) {
-  if (km == null) return null;
-  return km < 1 ? `${Math.round(km * 1000)} m away` : `${km.toFixed(1)} km away`;
-}
 
 export default function DonationCard({ donation, footer, muted = false, pickupPhotoUrl, distanceKm }) {
   const { title, description, foodType, quantity, unit, photoUrl, safeUntil, pickupAddress, donor, ai, status, location } =

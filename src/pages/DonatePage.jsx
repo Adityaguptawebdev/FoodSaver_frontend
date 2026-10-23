@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import client from "../api/client.js";
+import { resolveImageUrl } from "../utils/imageUrl.js";
 import LocationPicker from "../components/LocationPicker.jsx";
 import DateTimeField from "../components/DateTimeField.jsx";
 import Button from "../components/Button.jsx";
@@ -27,7 +28,30 @@ const TIPS = [
   "A precise pickup pin gets your listing seen by volunteers nearby first.",
 ];
 
+const SAFE_UNTIL_STEP_MS = 15 * 60 * 1000; // matches the date picker's 15-minute steps
+
+// A repost keeps the same safe-to-eat window length as last time, counted from now.
+function nextSafeUntil(donation) {
+  const windowMs = new Date(donation.safeUntil) - new Date(donation.createdAt);
+  if (!(windowMs > 0)) return "";
+  return new Date(Math.ceil((Date.now() + windowMs) / SAFE_UNTIL_STEP_MS) * SAFE_UNTIL_STEP_MS).toISOString();
+}
+
+function formFromDonation(donation) {
+  return {
+    title: donation.title,
+    description: donation.description || "",
+    foodType: donation.foodType,
+    quantity: String(donation.quantity),
+    unit: donation.unit,
+    safeUntil: nextSafeUntil(donation),
+    pickupAddress: donation.pickupAddress,
+  };
+}
+
 export default function DonatePage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const repostId = searchParams.get("repost");
   const [coords, setCoords] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [photo, setPhoto] = useState(null);
@@ -37,6 +61,40 @@ export default function DonatePage() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
   const [aiPreview, setAiPreview] = useState(null);
+  const [repostSource, setRepostSource] = useState(null); // { id, title, photoUrl } of the donation being posted again
+  const [repostError, setRepostError] = useState("");
+
+  // "Post again" from My donations lands here with ?repost=<id>: prefill everything from that donation.
+  useEffect(() => {
+    setRepostSource(null);
+    setRepostError("");
+    if (!repostId) {
+      // Leaving a prefilled repost (e.g. via the navbar's "Post donation") starts a blank form.
+      setForm(emptyForm);
+      setCoords(null);
+      return;
+    }
+
+    let ignore = false;
+    client
+      .get(`/donations/${repostId}`)
+      .then((res) => {
+        if (ignore) return;
+        const d = res.data.donation;
+        const [lng, lat] = d.location.coordinates;
+        setForm(formFromDonation(d));
+        setCoords({ lng, lat });
+        setPhoto(null);
+        setAiPreview(null);
+        setRepostSource({ id: d._id, title: d.title, photoUrl: d.photoUrl || null });
+      })
+      .catch(() => {
+        if (!ignore) setRepostError("Couldn't load that donation to post again — fill in the details below instead.");
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [repostId]);
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -86,6 +144,7 @@ export default function DonatePage() {
       data.append("lng", coords.lng);
       data.append("lat", coords.lat);
       if (photo) data.append("photo", photo);
+      else if (repostSource?.photoUrl) data.append("repostOf", repostSource.id);
 
       const res = await client.post("/donations", data, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -95,6 +154,8 @@ export default function DonatePage() {
       setCoords(null);
       setPhoto(null);
       setAiPreview(null);
+      // Drop ?repost so "Post another" starts from a blank form.
+      if (repostId) setSearchParams({}, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't post this donation.");
     } finally {
@@ -201,6 +262,15 @@ export default function DonatePage() {
           <p className="mt-2 text-charcoal-700">
             Add a photo and we'll auto-suggest a category, allergens, and a safe-to-eat estimate.
           </p>
+
+          {repostSource && (
+            <p className="mt-5 rounded-xl bg-olive-100 px-4 py-3 text-sm text-olive-700">
+              🔁 Prefilled from <strong>"{repostSource.title}"</strong>. Check the quantity and safe-to-eat time, then post.
+            </p>
+          )}
+          {repostError && (
+            <p className="mt-5 rounded-xl bg-danger-500/10 px-4 py-3 text-sm text-danger-500">{repostError}</p>
+          )}
 
           <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-6">
             <div className="flex flex-col gap-4">
@@ -336,6 +406,25 @@ export default function DonatePage() {
             </div>
 
             <div className="flex flex-col gap-4 border-t border-charcoal-900/10 pt-6">
+              {repostSource?.photoUrl && !photo && (
+                <div className="flex items-center gap-3 rounded-xl bg-cream-200 p-2 pr-4">
+                  <img
+                    src={resolveImageUrl(repostSource.photoUrl)}
+                    alt="Photo from last time"
+                    className="h-14 w-14 shrink-0 rounded-lg object-cover"
+                  />
+                  <p className="flex-1 text-xs text-charcoal-700">
+                    Reusing the photo from last time. Choose a new one below to replace it.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setRepostSource((s) => ({ ...s, photoUrl: null }))}
+                    className="text-xs font-semibold text-terracotta-600 hover:underline"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
               <label className="flex flex-col gap-1.5 text-sm font-medium text-charcoal-800">
                 Photo (optional, powers the AI listing assist)
                 <input

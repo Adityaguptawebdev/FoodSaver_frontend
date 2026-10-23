@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import client from "../api/client.js";
+import { useAuth } from "../context/AuthContext.jsx";
 import Button from "../components/Button.jsx";
 import StatTile from "../components/StatTile.jsx";
 import DonationCard from "../components/DonationCard.jsx";
@@ -33,7 +34,17 @@ const STEPS = [
   },
 ];
 
+// Logged-in users skip sign-up: donors go straight to the donation form, and NGOs/volunteers
+// (who can't open /donate) go to browsing instead.
+function primaryCta(user) {
+  if (user?.role === "donor") return { to: "/donate", label: "Donate food" };
+  if (user?.role === "ngo" || user?.role === "volunteer") return { to: "/browse", label: "Find donations" };
+  return { to: "/register", label: "Donate food" };
+}
+
 export default function LandingPage() {
+  const { user } = useAuth();
+  const cta = primaryCta(user);
   const [stats, setStats] = useState(null);
   const [recent, setRecent] = useState([]);
   const [recentLoading, setRecentLoading] = useState(true);
@@ -68,8 +79,8 @@ export default function LandingPage() {
               matched by location, tracked from post to plate.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Button as={Link} to="/register" variant="primary" className="px-7 py-3 text-base">
-                Donate food
+              <Button as={Link} to={cta.to} variant="primary" className="px-7 py-3 text-base">
+                {cta.label}
               </Button>
               <Button as={Link} to="/register" variant="outline" className="px-7 py-3 text-base">
                 Join as NGO / volunteer
