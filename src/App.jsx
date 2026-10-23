@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -15,7 +15,12 @@ import LeaderboardPage from "./pages/LeaderboardPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 
+// Pages that render without the site footer.
+const PATHS_WITHOUT_FOOTER = ["/donate", "/profile", "/impact", "/browse", "/login", "/register"];
+
 export default function App() {
+  const { pathname } = useLocation();
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -84,7 +89,7 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <Footer />
+      {!PATHS_WITHOUT_FOOTER.includes(pathname) && <Footer />}
     </div>
   );
 }
