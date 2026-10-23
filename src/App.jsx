@@ -9,6 +9,7 @@ import DonatePage from "./pages/DonatePage.jsx";
 import MyDonationsPage from "./pages/MyDonationsPage.jsx";
 import BrowsePage from "./pages/BrowsePage.jsx";
 import MyClaimsPage from "./pages/MyClaimsPage.jsx";
+import DonationDetailPage from "./pages/DonationDetailPage.jsx";
 import ImpactPage from "./pages/ImpactPage.jsx";
 import LeaderboardPage from "./pages/LeaderboardPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
@@ -53,6 +54,14 @@ export default function App() {
             element={
               <ProtectedRoute roles={["ngo", "volunteer"]}>
                 <MyClaimsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/donations/:id"
+            element={
+              <ProtectedRoute roles={["ngo", "volunteer"]}>
+                <DonationDetailPage />
               </ProtectedRoute>
             }
           />

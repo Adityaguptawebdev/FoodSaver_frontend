@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext.jsx";
 import Button from "./Button.jsx";
 import Avatar from "./Avatar.jsx";
+import NotificationBell from "./NotificationBell.jsx";
 
 const linkClasses = ({ isActive }) =>
   `text-sm font-semibold transition-colors ${isActive ? "text-terracotta-600" : "text-charcoal-700 hover:text-terracotta-600"}`;
@@ -42,6 +43,7 @@ function NavLinks({ user, className, linkClass, onNavigate }) {
 export default function Navbar() {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const receivesAlerts = user?.role === "ngo" || user?.role === "volunteer";
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(72);
 
@@ -79,43 +81,48 @@ export default function Navbar() {
 
         <NavLinks user={user} className="hidden items-center gap-6 md:flex" linkClass={linkClasses} />
 
-        <div className="hidden items-center gap-3 md:flex">
-          {user ? (
-            <Link
-              to="/profile"
-              className="group flex items-center gap-2.5 rounded-full border border-charcoal-900/10 bg-cream-100/60 py-1 pl-1 pr-4 text-sm font-medium text-charcoal-800 shadow-sm transition-all hover:border-terracotta-300 hover:bg-cream-100 hover:shadow-md"
-              onClick={closeMenu}
-            >
-              <span className="rounded-full ring-2 ring-cream-50 transition-shadow group-hover:ring-terracotta-300">
-                <Avatar name={user.orgName || user.name} src={user.avatarUrl} size={30} />
-              </span>
-              Hi, {user.orgName || user.name.split(" ")[0]}
-            </Link>
-          ) : (
-            <>
-              <Button as={Link} to="/login" variant="ghost">Log in</Button>
-              <Button as={Link} to="/register" variant="primary">Get started</Button>
-            </>
-          )}
-        </div>
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Keyed by user so logging in as someone else starts with a fresh list. */}
+          {receivesAlerts && <NotificationBell key={user.id} onOpen={closeMenu} />}
 
-        <button
-          type="button"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((o) => !o)}
-          className="relative z-10 flex h-10 w-10 items-center justify-center rounded-lg text-charcoal-900 hover:bg-cream-200 md:hidden"
-        >
-          {menuOpen ? (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-            </svg>
-          ) : (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
-            </svg>
-          )}
-        </button>
+          <div className="hidden items-center gap-3 md:flex">
+            {user ? (
+              <Link
+                to="/profile"
+                className="group flex items-center gap-2.5 rounded-full border border-charcoal-900/10 bg-cream-100/60 py-1 pl-1 pr-4 text-sm font-medium text-charcoal-800 shadow-sm transition-all hover:border-terracotta-300 hover:bg-cream-100 hover:shadow-md"
+                onClick={closeMenu}
+              >
+                <span className="rounded-full ring-2 ring-cream-50 transition-shadow group-hover:ring-terracotta-300">
+                  <Avatar name={user.orgName || user.name} src={user.avatarUrl} size={30} />
+                </span>
+                Hi, {user.orgName || user.name.split(" ")[0]}
+              </Link>
+            ) : (
+              <>
+                <Button as={Link} to="/login" variant="ghost">Log in</Button>
+                <Button as={Link} to="/register" variant="primary">Get started</Button>
+              </>
+            )}
+          </div>
+
+          <button
+            type="button"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((o) => !o)}
+            className="relative z-10 flex h-10 w-10 items-center justify-center rounded-lg text-charcoal-900 hover:bg-cream-200 md:hidden"
+          >
+            {menuOpen ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
     </header>
 

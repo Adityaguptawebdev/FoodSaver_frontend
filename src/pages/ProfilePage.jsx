@@ -20,6 +20,12 @@ const ROLE_LABELS = {
   admin: "Admin",
 };
 
+const NOTIFY_RADIUS_OPTIONS_KM = [5, 10, 25, 50];
+
+function receivesAlerts(user) {
+  return user.role === "ngo" || user.role === "volunteer";
+}
+
 function initFormFromUser(user) {
   const [lng, lat] = user.location?.coordinates || [0, 0];
   return {
@@ -28,6 +34,7 @@ function initFormFromUser(user) {
       phone: user.phone || "",
       orgName: user.orgName || "",
       address: user.address || "",
+      ...(receivesAlerts(user) && { notifyRadiusKm: user.notifyRadiusKm ?? 10 }),
     },
     coords: lng || lat ? { lng, lat } : null,
   };
@@ -280,6 +287,29 @@ export default function ProfilePage() {
               onCoordsChange={setCoords}
             />
           </div>
+
+          {receivesAlerts(user) && (
+            <div className="mt-6 flex flex-col gap-4 border-t border-charcoal-900/10 pt-6">
+              <p className="text-xs font-semibold uppercase tracking-wide text-terracotta-600">Notifications</p>
+              <label className="flex flex-col gap-1.5 text-sm font-medium text-charcoal-800">
+                Alert me about new food posted within
+                <select
+                  value={form.notifyRadiusKm}
+                  onChange={(e) => update("notifyRadiusKm", Number(e.target.value))}
+                  className={inputClasses}
+                >
+                  {NOTIFY_RADIUS_OPTIONS_KM.map((km) => (
+                    <option key={km} value={km}>{km} km of my location</option>
+                  ))}
+                </select>
+              </label>
+              {!coords && (
+                <p className="rounded-xl bg-gold-300/40 px-4 py-2.5 text-sm text-gold-600">
+                  Set your location above and save to start getting alerts about food posted near you.
+                </p>
+              )}
+            </div>
+          )}
 
           {error && <p className="mt-4 text-sm text-danger-500">{error}</p>}
 
