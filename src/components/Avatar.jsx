@@ -3,9 +3,11 @@ import { initials, avatarColor } from "../utils/gamification.js";
 export default function Avatar({ name, src, size = 48 }) {
   if (src) {
     return (
+      // no-referrer: Google profile photos can refuse requests that carry a referrer
       <img
         src={src}
         alt=""
+        referrerPolicy="no-referrer"
         className="shrink-0 rounded-full object-cover"
         style={{ width: size, height: size }}
       />

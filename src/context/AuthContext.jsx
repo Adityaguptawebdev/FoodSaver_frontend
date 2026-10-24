@@ -34,13 +34,23 @@ export function AuthProvider({ children }) {
     return res.data.user;
   }
 
+  // A first-time Google user has no account yet: this resolves to { needsRole, profile }
+  // without logging in, and the caller asks for a role and calls again with signupFields.
+  async function loginWithGoogle(idToken, signupFields) {
+    const res = await client.post("/auth/google", { idToken, ...signupFields });
+    if (res.data.needsRole) return res.data;
+    sessionStorage.setItem("foodsaver_token", res.data.token);
+    setUser(res.data.user);
+    return res.data;
+  }
+
   function logout() {
     sessionStorage.removeItem("foodsaver_token");
     setUser(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, setUser, loading, login, register, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

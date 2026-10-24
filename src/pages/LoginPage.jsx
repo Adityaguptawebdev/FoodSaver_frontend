@@ -3,13 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import Button from "../components/Button.jsx";
 import PasswordInput from "../components/PasswordInput.jsx";
+import GoogleSignInButton from "../components/GoogleSignInButton.jsx";
 import foodHandoverImg from "../assets/illustrations/food-handover.png";
 
 const inputClasses =
   "rounded-xl border border-charcoal-900/15 bg-cream-50 px-4 py-2.5 outline-none focus:border-terracotta-500";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -25,6 +26,28 @@ export default function LoginPage() {
     } catch (err) {
       if (err.response) {
         setError(err.response.data?.message || "Couldn't log in. Check your credentials.");
+      } else {
+        setError("Can't reach the server right now — check your connection and try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGoogle(idToken) {
+    setError("");
+    setLoading(true);
+    try {
+      const result = await loginWithGoogle(idToken);
+      if (result.needsRole) {
+        // First time with Google: finish signing up (role, location) on the register page.
+        navigate("/register", { state: { google: { idToken, profile: result.profile } } });
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data?.message || "Couldn't sign in with Google.");
       } else {
         setError("Can't reach the server right now — check your connection and try again.");
       }
@@ -90,6 +113,13 @@ export default function LoginPage() {
               {loading ? "Logging in…" : "Log in"}
             </Button>
           </form>
+
+          <div className="mt-6">
+            <GoogleSignInButton
+              onCredential={handleGoogle}
+              onError={() => setError("Google sign-in didn't complete. Please try again.")}
+            />
+          </div>
 
           <p className="mt-6 text-center text-sm text-charcoal-700">
             New here?{" "}
